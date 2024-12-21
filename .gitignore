@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+chatapp.api/Migrations/20241221143201_initial.cs
+chatapp.api/Migrations/20241221143201_initial.Designer.cs
+chatapp.api/Migrations/AppDbContextModelSnapshot.cs
