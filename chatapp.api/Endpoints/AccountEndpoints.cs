@@ -1,5 +1,6 @@
 ﻿using chatapp.api.Common;
 using chatapp.api.Models;
+using chatapp.api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +13,8 @@ namespace chatapp.api.Endpoints
             var group = app.MapGroup("/api/account").WithTags("account");
 
             group.MapPost("/register",async (HttpContext context, UserManager<AppUser> userManager,
-                [FromForm] string userName, [FromForm] string fullName, [FromForm] string email, [FromForm] string password) => 
+                [FromForm] string userName, [FromForm] string fullName, [FromForm] string email, [FromForm] string password,
+                [FromForm] IFormFile? profileImage) => 
             {
                 var userFromDb = await userManager.FindByEmailAsync(email);
 
@@ -21,11 +23,21 @@ namespace chatapp.api.Endpoints
                     return Results.BadRequest(Response<string>.Failure("User already existed."));
                 }
 
+                if (profileImage is null)
+                {
+                    return Results.BadRequest(Response<string>.Failure("Profile image is required."));
+                }
+
+                var picture = await FileUpload.Upload(profileImage);
+
+                picture = $"{context.Request.Scheme}://{context.Request.Host}/uploads/{picture}";
+
                 var user = new AppUser
                 {
                     Email = email,
                     FullName = fullName,
                     UserName = userName, 
+                    ProfileImage = picture
                 };
 
                 var result = await userManager.CreateAsync(user, password);
@@ -37,7 +49,8 @@ namespace chatapp.api.Endpoints
                 }
 
                 return Results.Ok(Response<string>.Success("","User created successfully."));
-            }).DisableAntiforgery();
+            })
+                .DisableAntiforgery();
 
             return group;
         }
