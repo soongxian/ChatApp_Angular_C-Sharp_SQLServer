@@ -1,5 +1,6 @@
 
 using chatapp.api.Data;
+using chatapp.api.Endpoints;
 using chatapp.api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -59,7 +60,9 @@ namespace chatapp.api
 
             app.UseAuthorization();
             app.UseAuthentication();
-            app.UseAuthorization(); 
+            app.UseAuthorization();
+
+            app.MapAccountEndpoint();
 
             app.Run();
         }
