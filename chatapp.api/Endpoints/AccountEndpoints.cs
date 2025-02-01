@@ -1,4 +1,5 @@
 ﻿using chatapp.api.Common;
+using chatapp.api.DTOs;
 using chatapp.api.Models;
 using chatapp.api.Services;
 using Microsoft.AspNetCore.Identity;
@@ -52,6 +53,31 @@ namespace chatapp.api.Endpoints
             })
                 .DisableAntiforgery();
 
+            group.MapPost("/login", async(UserManager<AppUser> UserManager,TokenService tokenService, LoginDto dto) =>
+            {
+                if (dto is null)
+                {
+                    return Results.BadRequest(Response<string>.Failure("Invalid login details."));
+                }
+
+                var user = await UserManager.FindByEmailAsync(dto.Email);
+
+                if (user is null)
+                {
+                    return Results.BadRequest(Response<string>.Failure("User not found."));
+                }
+
+                var result = await UserManager.CheckPasswordAsync(user, dto.Password);
+
+                if(!result)
+                {
+                    return Results.BadRequest(Response<string>.Failure("Invalid password."));
+                }
+
+                var token = tokenService.GenerateToken(user.Id, user.UserName!);
+
+                return Results.Ok(Response<string>.Success(token, "Login successful."));
+            });
             return group;
         }
     }

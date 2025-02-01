@@ -1,7 +1,7 @@
-
 using chatapp.api.Data;
 using chatapp.api.Endpoints;
 using chatapp.api.Models;
+using chatapp.api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +23,8 @@ namespace chatapp.api
             builder.Services.AddIdentityCore<AppUser>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+
+            builder.Services.AddScoped<TokenService>();
 
             builder.Services.AddAuthentication(options => { 
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
