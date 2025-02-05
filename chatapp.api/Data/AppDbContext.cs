@@ -9,5 +9,7 @@ namespace chatapp.api.Data
         public AppDbContext(DbContextOptions<AppDbContext> options ) : base(options)
         {
         }
+
+        public DbSet<Messages> Messages { get; set; }
     }
 }
